@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple QR Code Generator</title>
+    <style>
+        body {
+            font-family: Sans-Serif;
+            color: #073642;
+            background-color: #fdf6e3;
+            opacity: 0.8;
+            background: radial-gradient(circle, transparent 20%, #fdf6e3 20%, #fdf6e3 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, #fdf6e3 20%, #fdf6e3 80%, transparent 80%, transparent) 100px 100px, linear-gradient(#eee8d5 8px, transparent 8px) 0 -4px, linear-gradient(90deg, #eee8d5 8px, #fdf6e3 8px) -4px 0;
+            background-size: 200px 200px, 200px 200px, 100px 100px, 100px 100px;
+        }
+
+        h1 {
+            font-family: Georgia, serif;
+            text-align: start;
+            margin-bottom: 0px;
+        }
+
+        main {
+            margin-top: 30px;
+            display: grid;
+            align-items: center;
+            justify-content: center;
+        }
+
+        p {
+            text-align: start;
+            margin-bottom: 30px;
+        }
+
+        p#hint {
+            filter: blur(3px);
+            transition-timing-function: ease-in-out;
+            transition-duration: 150ms;
+            transition-property: all;
+        }
+
+        p#hint:hover {
+            filter: none;
+        }
+
+        p#url_desc {
+            text-align: center;
+        }
+
+        input#btn_lucky {
+
+            display: inline-block;
+            outline: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 12px;
+            line-height: 20px;
+            height: 32px;
+            max-height: 32px;
+            background: #566AE5;
+            font-weight: 700;
+            border-color: #b7bff8;
+            border-radius: 0;
+            color: #FFFFFF;
+            transition-timing-function: ease-in-out;
+            transition-property: box-shadow;
+            transition-duration: 150ms;
+
+        }
+
+        input#btn_lucky:hover {
+            box-shadow: 0 2px 2px rgb(39 44 52 / 12%);
+        }
+
+        #input_box {
+            margin: auto;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input[type="url"] {
+
+            padding: 0 10px;
+            text-align: left;
+            transition-property: box-shadow, background;
+            transition-duration: 150ms;
+            transition-timing-function: ease-in-out;
+            background-color: #FFFFFF;
+            border-width: 2px;
+            border-style: solid;
+            border-color: #DAE3F3;
+            border-radius: 0px;
+            color: #272C34;
+            cursor: text;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0px;
+            font-weight: 400;
+            font-style: normal;
+            height: 30px;
+            width: 240px;
+        }
+
+        input[type="url"]:focus {
+            transition-property: border-color, box-shadow, background;
+            border-color: #39414D;
+            outline: 0px;
+            box-shadow: 0 0 0 3px #c5d2e7;
+        }
+
+        input[type="button"] {
+
+            display: inline-block;
+            outline: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 12px;
+            line-height: 20px;
+            height: 32px;
+            max-height: 32px;
+            background: #fff;
+            font-weight: 700;
+            border: 2px solid #DAE3F3;
+            border-radius: 0;
+            color: #272C34;
+            transition-timing-function: ease-in-out;
+            transition-property: box-shadow;
+            transition-duration: 150ms;
+
+        }
+
+        input[type="button"]:hover {
+            box-shadow: 0 2px 2px rgb(39 44 52 / 12%);
+        }
+
+        img {
+            box-shadow: 0 1.6px 3.6px 0 rgb(0 0 0 / 13%), 0 0.3px 0.9px 0 rgb(0 0 0 / 11%);
+            background-color: #ffffff;
+        }
+
+        input:invalid+span::after {
+            content: "❌";
+        }
+
+        input:valid+span::after {
+            content: "✅";
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>🍞 レジスタントブレッドの</br><i>QRコードジェネレーター 🌿</i></h1>
+        <p id="hint">
+            <i><b>S</b>eek <b>S</b>uccess, <b>R</b>each <b>F</b>urther,</i>
+            <i><b>S</b>eek <b>S</b>uccess <b>T</b>hrough <b>I</b>nnovation.</i>
+        </p>
+        <div id="input_box">
+            <input type="url" placeholder="http://localhost" pattern="http://127.0.0.1/.*" required
+                title="fill in with a local address" id="url_input">
+            <span class="validity"></span>
+            <input type="button" value="Generate" id="generate_button">
+            <input type="button" id="btn_lucky" value="好手氣">
+        </div>
+        <img width="450" src="{{ url_for('static', filename='code.svg') }}" id="qr_code_image">
+        <p id="url_desc">🔍 Sacn the QR Code to preview the site...</p>
+    </main>
+</body>
+
+<script>
+    document.getElementById('generate_button').addEventListener('click', function() {
+        const url = document.getElementById('url_input').value;
+
+        if (!url) {
+            alert('Please enter a valid URL');
+            return;
+        }
+        let data = new FormData()
+        data.append("url", url)
+        fetch('qrcode/generate', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'succ') {
+                const imgPath = `/static/generated/${data.file_name}.svg`;
+                document.getElementById('qr_code_image').src = imgPath;
+            } else {
+                alert(data.msg);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while generating the QR code');
+        });
+    });
+</script>
+
+</html>
