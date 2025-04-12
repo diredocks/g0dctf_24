@@ -1,2 +1,3 @@
 */.venv
 ./qrcode_gen/problem/static/generated/*
+__pycache__
