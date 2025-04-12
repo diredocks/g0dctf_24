@@ -8,7 +8,7 @@ import os
 import re
 
 app = Flask(__name__)
-app.config['IWANT2PLAYWITHU'] = str(uuid4())
+app.config['OHHOHO'] = str(uuid4())
 
 factory = qrcode.image.svg.SvgImage
 flag = "g0d{tha7s_r3al1y_a_5la5h_h1t!}"
@@ -31,11 +31,11 @@ def getip():
     response_data = x_forward_ip
     response_data = render_template_string(response_data)
     if isinstance(x_forward_ip, str) and len(x_forward_ip)>10:
-        return {"status": "fail", "msg": "g0f0cky0urs31f"}
+        return {"status": "fail", "msg": "I LOVE HEADER!"}
     
     return {"ip": request.remote_addr, "x-forward-for": response_data}
 
-@app.route('/'+app.config['IWANT2PLAYWITHU'])
+@app.route('/'+app.config['OHHOHO'])
 def local_only():
     if request.remote_addr != "127.0.0.1":
         return {"status": "233", "msg": "卑鄙的外乡人..."}
