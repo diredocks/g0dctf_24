@@ -33,17 +33,6 @@
             margin-bottom: 30px;
         }
 
-        p#hint {
-            filter: blur(3px);
-            transition-timing-function: ease-in-out;
-            transition-duration: 150ms;
-            transition-property: all;
-        }
-
-        p#hint:hover {
-            filter: none;
-        }
-
         p#url_desc {
             text-align: center;
         }
@@ -151,17 +140,16 @@
 
 <body>
     <main>
-        <h1>🍞 レジスタントブレッドの</br><i>QRコードジェネレーター 🌿</i></h1>
+        <h1>🍞 抗性面包的二维码生成器 🌿</i></h1>
         <p id="hint">
-            <i><b>S</b>eek <b>S</b>uccess, <b>R</b>each <b>F</b>urther,</i>
-            <i><b>S</b>eek <b>S</b>uccess <b>T</b>hrough <b>I</b>nnovation.</i>
+            <i>Seek Success, Reach Further,</i>
+            <i>Seek Success Through Innovation.</i>
         </p>
         <div id="input_box">
-            <input type="url" placeholder="http://localhost" pattern="http://127.0.0.1/.*" required
-                title="fill in with a local address" id="url_input">
+            <input type="url" placeholder="http://baidu.com" pattern="http://baidu.com.*" required id="url_input">
             <span class="validity"></span>
-            <input type="button" value="Generate" id="generate_button">
-            <input type="button" id="btn_lucky" value="好手氣">
+            <input type="button" value="走" id="generate_button">
+            <input type="button" id="btn_lucky" value="那很好了">
         </div>
         <img width="450" src="{{ url_for('static', filename='code.svg') }}" id="qr_code_image">
         <p id="url_desc">🔍 Sacn the QR Code to preview the site...</p>
@@ -171,13 +159,14 @@
 <script>
     document.getElementById('generate_button').addEventListener('click', function() {
         const url = document.getElementById('url_input').value;
-
         if (!url) {
             alert('Please enter a valid URL');
             return;
         }
+
         let data = new FormData()
         data.append("url", url)
+
         fetch('qrcode/generate', {
             method: 'POST',
             body: data
